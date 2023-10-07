@@ -94,10 +94,10 @@ app.get('*', function (req, res) {
         var pathIsFolder = false
 
         if (formatedOriginalUrl.endsWith('/')) {
-            if (fs.existsSync(filePath + "index.html")) {
+            if (fs.existsSync(filePath + "index.ejs")) {
+                filePath = filePath + "index.ejs"
+            } else if (fs.existsSync(filePath + "index.html")) {
                 filePath = filePath + "index.html"
-            } else if (fs.existsSync(filePath + "index.redir")) {
-
             } else {
                 pathIsFolder = true
             }
