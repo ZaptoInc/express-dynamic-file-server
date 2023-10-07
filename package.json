@@ -1,0 +1,19 @@
+{
+  "name": "zapto.zip",
+  "version": "1.0.0",
+  "description": "Zapto's sharex file server",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ZaptoInc/zapto.zip.git"
+  },
+  "author": "Zapto",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ZaptoInc/zapto.zip/issues"
+  },
+  "homepage": "https://github.com/ZaptoInc/zapto.zip#readme"
+}
