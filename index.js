@@ -4,30 +4,9 @@ const path = require('path');
 
 const config = require('./config.json')
 const Default = require('./default.js')
-const defaultPath = { ...Default.Path }
+const defaultPath = { ...Default.Path, folder: config.defaultFolder }
 
 const app = express()
-
-var database = {}
-
-if (fs.existsSync('./database.json')) {
-    database = require('./database.json')
-}
-
-if (!database.paths) {
-
-    database.paths = {
-        '/': { ...defaultPath }
-    }
-}
-
-if (!database.pathRewrite) {
-
-    database.pathRewrite = {
-    }
-}
-
-fs.writeFileSync('./database.json', JSON.stringify(database))
 
 // app.get('/', function (req, res) {
 
@@ -41,32 +20,16 @@ app.all('*', function (req, res) {
 
     console.log(`${req.method} ${req.hostname}${req.originalUrl}`)
 
-    var keyArray = Object.keys(database.paths);
+    currentPath = decodeURI(req.originalUrl.split("?")[0])
 
-    keyArray.sort()
+    var folderConfig = getFolderConfig(currentPath, config.defaultFolder, req.hostname, currentPath)
+    var formatedOriginalUrl = folderConfig.URL
 
-    pathObject = { ...defaultPath }
-    currentPath = '/'
-
-    var pathRewrite = ''
-
-    if (database.pathRewrite[req.hostname]) {
-        pathRewrite = database.pathRewrite[req.hostname]
-    }
-
-    var formatedOriginalUrl = req.originalUrl.substring(0, 1) + pathRewrite + decodeURI(req.originalUrl.split("?")[0].substring(1))
-
-    keyArray.forEach(function (item) {
-        if (formatedOriginalUrl.startsWith(item)) {
-            currentPath = item
-            pathObject = database.paths[item]
-        }
-    })
 
     var allowedHostname = false
 
-    if (pathObject.allowedHostname.length > 0) {
-        pathObject.allowedHostname.forEach(hostname => {
+    if (folderConfig.config.allowedHostname.length > 0) {
+        folderConfig.config.allowedHostname.forEach(hostname => {
             if (hostname == '*' || req.hostname == hostname) {
                 allowedHostname = true
             }
@@ -80,10 +43,10 @@ app.all('*', function (req, res) {
 
 
         var folder = config.defaultFolder
-        if (pathObject.folder) {
-            folder = pathObject.folder
+        if (folderConfig.config.folder) {
+            folder = folderConfig.config.folder
         }
-        if (pathObject.protection) {
+        if (folderConfig.config.protection) {
             //todo
         } else {
             sendFile = true
@@ -91,7 +54,7 @@ app.all('*', function (req, res) {
     }
 
     if (sendFile) {
-        var filePath = path.join(path.join(__dirname, folder), decodeURI(req.originalUrl.split("?")[0]).replace(currentPath, ''))
+        var filePath = path.join(path.join(__dirname, folder), folderConfig.path)
 
         var pathIsFolder = false
         if (formatedOriginalUrl.endsWith('/')) {
@@ -115,12 +78,12 @@ app.all('*', function (req, res) {
             }
         }
 
-        pathObject.headers.forEach(header => {
+        folderConfig.config.headers.forEach(header => {
             res.append(header.key, header.value)
         });
 
         if (pathIsFolder) {
-            if (pathObject.onlineFolder) {
+            if (folderConfig.config.onlineFolder) {
                 var childs = fs.readdirSync(filePath, { withFileTypes: true }).sort(function (a, b) {
                     if (a.isDirectory() && !b.isDirectory()) {
                         return -1
@@ -130,19 +93,24 @@ app.all('*', function (req, res) {
                         return 0
                     }
                 })
+                var formatedChilds = []
                 childs.forEach(child => {
-                    var fullChildPath = path.join(filePath, child.name)
-                    if (child.isDirectory()) {
-                        child.size = getFolderSize(fullChildPath)
-                    } else {
-                        var childStat = fs.statSync(fullChildPath)
-                        child.size = childStat.size
+                    if (!child.name.endsWith(".fsconfig")) {
+                        var fullChildPath = path.join(filePath, child.name)
+                        if (child.isDirectory()) {
+                            child.size = getFolderSize(fullChildPath)
+                        } else {
+                            var childStat = fs.statSync(fullChildPath)
+                            child.size = childStat.size
+                        }
+                        child.sizeText = getBytesText(child.size)
+                        formatedChilds.push(child)
                     }
-                    child.sizeText = getBytesText(child.size)
+
 
 
                 });
-                res.render('onlineFolder.ejs', { req, res, childs })
+                res.render('onlineFolder.ejs', { req, res, childs : formatedChilds })
             } else {
                 sendFile = false
             }
@@ -163,6 +131,10 @@ app.all('*', function (req, res) {
             if (fileStat && !fileStat.isDirectory()) {
                 if (filePath.endsWith('.ejs')) {
                     res.render(filePath, { req, res })
+
+                } else if (filePath.endsWith('.fsconfig')) {
+                    sendFile = false
+
                 } else {
                     res.sendFile(filePath)
                 }
@@ -208,6 +180,57 @@ const getBytesText = function (bytes) {
     }
 
     return (bytes / Math.pow(1024, i)).toFixed(1) + " " + sizes[i]
+}
+
+const getFolderConfig = function (path, workingPath, domain = '127.0.0.1', URL = '/', currentConfig = { ...defaultPath }, relativePath = null) {
+    if (!relativePath) {
+        relativePath = path
+    }
+    var result = currentConfig
+    var workingPath = workingPath.replace('\\', '/')
+    path = path.replace('\\', '/')
+    var leftPath = path
+
+    if (path.endsWith('/')) {
+        path = path.slice(0, -1)
+    } else {
+    }
+    path.split('/').forEach(pathPart => {
+        leftPath = leftPath.replace(pathPart + '/', '')
+        workingPath = workingPath + pathPart
+
+        var currentFsConfig = getFsConfig(workingPath + '.fsconfig')
+        if (currentFsConfig) {
+        } else if (!workingPath.endsWith('/')) {
+            workingPath = workingPath + '/'
+            currentFsConfig = getFsConfig(workingPath + '.fsconfig')
+        }
+        if (currentFsConfig) {
+            result = { ...result, ...currentFsConfig }
+            if (currentFsConfig.pathRewrite && currentFsConfig.pathRewrite[domain]) {
+                leftPath = currentFsConfig.pathRewrite[domain] + leftPath
+                URL = currentFsConfig.pathRewrite[domain] + URL
+                relativePath = leftPath
+                delete result.pathRewrite
+            }
+            if (currentFsConfig.folder) {
+                workingPath = currentFsConfig.folder
+                relativePath = leftPath
+            }
+            if ((currentFsConfig.pathRewrite && currentFsConfig.pathRewrite[domain]) || currentFsConfig.folder) {
+                return getFolderConfig(leftPath, workingPath, domain, URL, result, relativePath)
+            }
+        }
+    });
+    return { config: result, URL, path: relativePath }
+}
+
+const getFsConfig = function (path) {
+    if (fs.existsSync(path)) {
+        return JSON.parse(fs.readFileSync(path))
+    } else {
+        return null
+    }
 }
 
 app.listen(config.port);
