@@ -37,7 +37,7 @@ fs.writeFileSync('./database.json', JSON.stringify(database))
 
 // })
 
-app.get('*', function (req, res) {
+app.all('*', function (req, res) {
 
     var keyArray = Object.keys(database.paths);
 
@@ -95,11 +95,18 @@ app.get('*', function (req, res) {
 
         if (formatedOriginalUrl.endsWith('/')) {
             if (fs.existsSync(filePath + "/index.ejs")) {
-                filePath = filePath + "/index.ejs"
-            } else if (fs.existsSync(filePath + "/index.html")) {
-                filePath = filePath + "/index.html"
-            } else {
-                pathIsFolder = true
+                var fileStat = fs.statSync(filePath + "/index.ejs")
+                if (!fileStat || fileStat.isDirectory()) {
+                    filePath = filePath + "/index.ejs"
+                }
+            }
+            if (fs.existsSync(filePath + "/index.html")) {
+                var fileStat = fs.statSync(filePath + "/index.html")
+                if (!fileStat || fileStat.isDirectory()) {
+                    filePath = filePath + "/index.html"
+                } else {
+                    pathIsFolder = true
+                }
             }
         }
 
@@ -123,16 +130,26 @@ app.get('*', function (req, res) {
                 sendFile = false
             }
         } else {
-            if (!fs.existsSync(filePath) && fs.existsSync(filePath + '.ejs')) {
-                filePath = filePath + '.ejs'
-            }
+
+            var fileStat = null
             if (fs.existsSync(filePath)) {
+                fileStat = fs.statSync(filePath)
+            }
+            
+            if ((!fileStat || fileStat.isDirectory()) && fs.existsSync(filePath + '.ejs')) {
+                filePath = filePath + '.ejs'
+                if (fs.existsSync(filePath)) {
+                    fileStat = fs.statSync(filePath)
+                }           
+            }
+
+            if (fileStat && !fileStat.isDirectory()) {
                 if (filePath.endsWith('.ejs')) {
-                    res.render(filePath, {req, res})
+                    res.render(filePath, { req, res })
                 } else {
                     res.sendFile(filePath)
                 }
-                
+
             } else {
                 sendFile = false
             }
@@ -143,7 +160,7 @@ app.get('*', function (req, res) {
     }
     if (!sendFile) {
         {
-            res.render('errors/404.ejs', {req, res})
+            res.render('errors/404.ejs', { req, res })
         }
     }
 })
