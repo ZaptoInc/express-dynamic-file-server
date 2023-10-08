@@ -54,7 +54,7 @@ app.all('*', function (req, res) {
         pathRewrite = database.pathRewrite[req.hostname]
     }
 
-    var formatedOriginalUrl = req.originalUrl.split("?")[0].split("?")[0].substring(0, 1) + pathRewrite + req.originalUrl.split("?")[0].substring(1)
+    var formatedOriginalUrl = req.originalUrl.substring(0, 1) + pathRewrite + decodeURI(req.originalUrl.split("?")[0].substring(1))
 
     keyArray.forEach(function (item) {
         if (formatedOriginalUrl.startsWith(item)) {
@@ -91,24 +91,27 @@ app.all('*', function (req, res) {
     }
 
     if (sendFile) {
-        var filePath = path.join(path.join(__dirname, folder), req.originalUrl.split("?")[0].replace(currentPath, ''))
+        var filePath = path.join(path.join(__dirname, folder), decodeURI(req.originalUrl.split("?")[0]).replace(currentPath, ''))
 
         var pathIsFolder = false
-        if (formatedOriginalUrl.endsWith('/')) {   
-            pathIsFolder = true     
+        if (formatedOriginalUrl.endsWith('/')) {
+            pathIsFolder = true
             if (fs.existsSync(filePath + "/index.ejs")) {
                 var fileStat = fs.statSync(filePath + "/index.ejs")
                 if (fileStat && !fileStat.isDirectory()) {
                     filePath = filePath + "/index.ejs"
-                    pathIsFolder = false    
+                    pathIsFolder = false
                 }
-            } else 
-            if (fs.existsSync(filePath + "/index.html")) {
-                var fileStat = fs.statSync(filePath + "/index.html")
-                if (fileStat && !fileStat.isDirectory()) {
-                    filePath = filePath + "/index.html" 
-                    pathIsFolder = false                
+            } else
+                if (fs.existsSync(filePath + "/index.html")) {
+                    var fileStat = fs.statSync(filePath + "/index.html")
+                    if (fileStat && !fileStat.isDirectory()) {
+                        filePath = filePath + "/index.html"
+                        pathIsFolder = false
+                    }
                 }
+            if (!fs.existsSync(filePath)) {
+                pathIsFolder = false
             }
         }
 
@@ -136,8 +139,8 @@ app.all('*', function (req, res) {
                         child.size = childStat.size
                     }
                     child.sizeText = getBytesText(child.size)
-                    
-                    
+
+
                 });
                 res.render('onlineFolder.ejs', { req, res, childs })
             } else {
@@ -182,7 +185,7 @@ app.all('*', function (req, res) {
 function getFolderSize(folder) {
     var result = 0
     fs.readdirSync(folder, { withFileTypes: true }).forEach(element => {
-        if(element.isDirectory()) {
+        if (element.isDirectory()) {
             result = getFolderSize(path.join(folder, element.name))
         } else {
             result = result + fs.statSync(path.join(folder, element.name)).size
@@ -191,20 +194,20 @@ function getFolderSize(folder) {
     return result
 }
 
-const getBytesText = function(bytes) {
+const getBytesText = function (bytes) {
     const sizes = ["Bytes", "KB", "MB", "GB", "TB"]
-  
+
     if (bytes == 0) {
-      return "n/a"
+        return "n/a"
     }
-  
+
     const i = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)))
-  
+
     if (i == 0) {
-      return bytes + " " + sizes[i]
+        return bytes + " " + sizes[i]
     }
-  
+
     return (bytes / Math.pow(1024, i)).toFixed(1) + " " + sizes[i]
-  }
+}
 
 app.listen(config.port);
