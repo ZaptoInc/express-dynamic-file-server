@@ -27,17 +27,10 @@ app.all('*', function (req, res) {
 
 
     var allowedHostname = false
-
-    if (folderConfig.config.allowedHostname.length > 0) {
-        folderConfig.config.allowedHostname.forEach(hostname => {
-            if (hostname == '*' || req.hostname == hostname) {
-                allowedHostname = true
-            }
-        });
-    } else {
+    if(!doesMatchFromList(folderConfig.config.allowedHostname, req.hostname)) {
         allowedHostname = true
     }
-
+    
     var sendFile = false
     if (allowedHostname) {
 
