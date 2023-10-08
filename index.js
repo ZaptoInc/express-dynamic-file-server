@@ -195,7 +195,7 @@ function getFolderSize(folder) {
 }
 
 const getBytesText = function (bytes) {
-    const sizes = ["Bytes", "KB", "MB", "GB", "TB"]
+    const sizes = ["Bytes", "KB", "MB", "GB", "TB", "PB"]
 
     if (bytes == 0) {
         return "n/a"
