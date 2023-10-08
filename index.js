@@ -1,12 +1,17 @@
 const express = require('express')
 const fs = require('fs')
 const path = require('path');
+const fileUpload = require('express-fileupload');
+var bodyParser = require('body-parser')
 
 const config = require('./config.json')
 const Default = require('./default.js')
 const defaultPath = { ...Default.Path, folder: config.defaultFolder }
 
 const app = express()
+app.use(fileUpload())
+app.use(bodyParser.urlencoded({ extended: false }))
+app.use(bodyParser.json())
 
 // app.get('/', function (req, res) {
 
