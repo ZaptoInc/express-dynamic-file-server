@@ -110,7 +110,7 @@ app.all('*', function (req, res) {
 
 
                 });
-                res.render('onlineFolder.ejs', { req, res, childs : formatedChilds })
+                res.render('onlineFolder.ejs', { req, res, childs: formatedChilds })
             } else {
                 sendFile = false
             }
@@ -231,6 +231,22 @@ const getFsConfig = function (path) {
     } else {
         return null
     }
+}
+
+const matchRuleShort = function (str, rule) { //from https://stackoverflow.com/questions/26246601/wildcard-string-comparison-in-javascript
+    var escapeRegex = (str) => str.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1");
+    return new RegExp("^" + rule.split("*").map(escapeRegex).join(".*") + "$").test(str);
+}
+
+const doesMatchFromList = function (list, str) {
+    result = false
+    list.forEach(rule => {
+        if (matchRuleShort(str, rule)) {
+            result = true
+            return result
+        }
+    });
+    return result
 }
 
 app.listen(config.port);
