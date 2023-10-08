@@ -103,7 +103,7 @@ app.all('*', function (req, res) {
 
 
                 });
-                res.render('onlineFolder.ejs', { req, res, childs: formatedChilds })
+                res.render('onlineFolder.ejs', { req, res, childs: formatedChilds, fs, config : folderConfig })
             } else {
                 sendFile = false
             }
@@ -127,7 +127,7 @@ app.all('*', function (req, res) {
                 } else if (filePath.endsWith('.fsconfig')) {
                     sendFile = false
                 } else if (filePath.endsWith('.ejs')) {
-                    res.render(filePath, { req, res })
+                    res.render(filePath, { req, res, fs, config : folderConfig })
                 } else {
                     res.sendFile(filePath)
                 }
