@@ -30,7 +30,7 @@ app.all('*', function (req, res) {
     if(!doesMatchFromList(folderConfig.config.allowedHostname, req.hostname)) {
         allowedHostname = true
     }
-    
+
     var sendFile = false
     if (allowedHostname) {
 
@@ -88,7 +88,7 @@ app.all('*', function (req, res) {
                 })
                 var formatedChilds = []
                 childs.forEach(child => {
-                    if (!child.name.endsWith(".fsconfig") || !doesMatchFromList(folderConfig.config.DisallowedFiles, child.name)) {
+                    if (!child.name.endsWith(".fsconfig") && !doesMatchFromList(folderConfig.config.DisallowedFiles, child.name)) {
                         var fullChildPath = path.join(filePath, child.name)
                         if (child.isDirectory()) {
                             child.size = getFolderSize(fullChildPath)
