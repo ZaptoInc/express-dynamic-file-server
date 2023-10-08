@@ -1,4 +1,4 @@
-<h2>Files and folders for <%=req.originalUrl%></h2>
+<h2>Files and folders for <%=req.originalUrl.split("?")[0]%></h2>
 <ul>
     <%if(req.originalUrl !== '/') {%> 
         <li><a href="../">../</a></li>

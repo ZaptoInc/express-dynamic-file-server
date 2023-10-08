@@ -52,7 +52,7 @@ app.all('*', function (req, res) {
         pathRewrite = database.pathRewrite[req.hostname]
     }
 
-    var formatedOriginalUrl = req.originalUrl.substring(0, 1) + pathRewrite + req.originalUrl.substring(1)
+    var formatedOriginalUrl = req.originalUrl.split("?")[0].split("?")[0].substring(0, 1) + pathRewrite + req.originalUrl.split("?")[0].substring(1)
 
     keyArray.forEach(function (item) {
         if (formatedOriginalUrl.startsWith(item)) {
@@ -89,27 +89,26 @@ app.all('*', function (req, res) {
     }
 
     if (sendFile) {
-        var filePath = path.join(path.join(__dirname, folder), req.originalUrl.replace(currentPath, ''))
+        var filePath = path.join(path.join(__dirname, folder), req.originalUrl.split("?")[0].replace(currentPath, ''))
 
         var pathIsFolder = false
-
         if (formatedOriginalUrl.endsWith('/')) {
+            pathIsFolder = true
             if (fs.existsSync(filePath + "/index.ejs")) {
                 var fileStat = fs.statSync(filePath + "/index.ejs")
                 if (!fileStat || fileStat.isDirectory()) {
                     filePath = filePath + "/index.ejs"
+                    pathIsFolder = false
                 }
             }
             if (fs.existsSync(filePath + "/index.html")) {
                 var fileStat = fs.statSync(filePath + "/index.html")
                 if (!fileStat || fileStat.isDirectory()) {
                     filePath = filePath + "/index.html"
-                } else {
-                    pathIsFolder = true
+                    pathIsFolder = false
                 }
             }
         }
-
         pathObject.headers.forEach(header => {
             res.append(header.key, header.value)
         });
@@ -135,12 +134,12 @@ app.all('*', function (req, res) {
             if (fs.existsSync(filePath)) {
                 fileStat = fs.statSync(filePath)
             }
-            
+
             if ((!fileStat || fileStat.isDirectory()) && fs.existsSync(filePath + '.ejs')) {
                 filePath = filePath + '.ejs'
                 if (fs.existsSync(filePath)) {
                     fileStat = fs.statSync(filePath)
-                }           
+                }
             }
 
             if (fileStat && !fileStat.isDirectory()) {
