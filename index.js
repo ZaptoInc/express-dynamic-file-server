@@ -39,6 +39,8 @@ fs.writeFileSync('./database.json', JSON.stringify(database))
 
 app.all('*', function (req, res) {
 
+    console.log(`${req.method} ${req.hostname}${req.originalUrl}`)
+
     var keyArray = Object.keys(database.paths);
 
     keyArray.sort()
@@ -92,20 +94,20 @@ app.all('*', function (req, res) {
         var filePath = path.join(path.join(__dirname, folder), req.originalUrl.split("?")[0].replace(currentPath, ''))
 
         var pathIsFolder = false
-        if (formatedOriginalUrl.endsWith('/')) {
-            pathIsFolder = true
+        if (formatedOriginalUrl.endsWith('/')) {   
+            pathIsFolder = true     
             if (fs.existsSync(filePath + "/index.ejs")) {
                 var fileStat = fs.statSync(filePath + "/index.ejs")
-                if (!fileStat || fileStat.isDirectory()) {
+                if (fileStat && !fileStat.isDirectory()) {
                     filePath = filePath + "/index.ejs"
-                    pathIsFolder = false
+                    pathIsFolder = false    
                 }
-            }
+            } else 
             if (fs.existsSync(filePath + "/index.html")) {
                 var fileStat = fs.statSync(filePath + "/index.html")
-                if (!fileStat || fileStat.isDirectory()) {
-                    filePath = filePath + "/index.html"
-                    pathIsFolder = false
+                if (fileStat && !fileStat.isDirectory()) {
+                    filePath = filePath + "/index.html" 
+                    pathIsFolder = false                
                 }
             }
         }
