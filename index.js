@@ -111,7 +111,7 @@ app.all('*', function (req, res) {
                 }
             }
         }
-        
+
         pathObject.headers.forEach(header => {
             res.append(header.key, header.value)
         });
@@ -135,6 +135,7 @@ app.all('*', function (req, res) {
                         var childStat = fs.statSync(fullChildPath)
                         child.size = childStat.size
                     }
+                    child.sizeText = getBytesText(child.size)
                     
                     
                 });
@@ -189,5 +190,21 @@ function getFolderSize(folder) {
     });
     return result
 }
+
+const getBytesText = function(bytes) {
+    const sizes = ["Bytes", "KB", "MB", "GB", "TB"]
+  
+    if (bytes == 0) {
+      return "n/a"
+    }
+  
+    const i = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)))
+  
+    if (i == 0) {
+      return bytes + " " + sizes[i]
+    }
+  
+    return (bytes / Math.pow(1024, i)).toFixed(1) + " " + sizes[i]
+  }
 
 app.listen(config.port);
