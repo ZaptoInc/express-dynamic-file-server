@@ -88,7 +88,7 @@ app.all('*', function (req, res) {
                 })
                 var formatedChilds = []
                 childs.forEach(child => {
-                    if (!child.name.endsWith(".fsconfig") && !doesMatchFromList(folderConfig.config.DisallowedFiles, child.name)) {
+                    if (!child.name.endsWith(".fsconfig") && !doesMatchFromList(folderConfig.config.disallowedFiles, child.name)) {
                         var fullChildPath = path.join(filePath, child.name)
                         if (child.isDirectory()) {
                             child.size = getFolderSize(fullChildPath)
@@ -122,7 +122,7 @@ app.all('*', function (req, res) {
             }
 
             if (fileStat && !fileStat.isDirectory()) {
-                if (doesMatchFromList(folderConfig.config.DisallowedFiles, filePath)) {
+                if (doesMatchFromList(folderConfig.config.disallowedFiles, filePath)) {
                     sendFile = false
                 } else if (filePath.endsWith('.fsconfig')) {
                     sendFile = false

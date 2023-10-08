@@ -8,6 +8,6 @@ module.exports = {
         folder : null, //folder to use, or null to use the default one (with relative path)
         onlineFolder : false, //acts as an online folder with navigation and folder/file listing,
         pathRewrite : {}, //rewrites the urls to another path
-        DisallowedFiles : [] //disallowed files to be 
+        disallowedFiles : [] //disallowed files to be 
     }
 }
