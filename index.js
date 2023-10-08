@@ -111,6 +111,7 @@ app.all('*', function (req, res) {
                 }
             }
         }
+        
         pathObject.headers.forEach(header => {
             res.append(header.key, header.value)
         });
@@ -126,6 +127,17 @@ app.all('*', function (req, res) {
                         return 0
                     }
                 })
+                childs.forEach(child => {
+                    var fullChildPath = path.join(filePath, child.name)
+                    if (child.isDirectory()) {
+                        child.size = getFolderSize(fullChildPath)
+                    } else {
+                        var childStat = fs.statSync(fullChildPath)
+                        child.size = childStat.size
+                    }
+                    
+                    
+                });
                 res.render('onlineFolder.ejs', { req, res, childs })
             } else {
                 sendFile = false
@@ -165,5 +177,17 @@ app.all('*', function (req, res) {
         }
     }
 })
+
+function getFolderSize(folder) {
+    var result = 0
+    fs.readdirSync(folder, { withFileTypes: true }).forEach(element => {
+        if(element.isDirectory()) {
+            result = getFolderSize(path.join(folder, element.name))
+        } else {
+            result = result + fs.statSync(path.join(folder, element.name)).size
+        }
+    });
+    return result
+}
 
 app.listen(config.port);
