@@ -149,7 +149,15 @@ app.all('*', function (req, res) {
     }
     if (!sendFile) {
         {
-            res.render('errors/404.ejs', { req, res })
+            var error404File = 'errors/404.ejs'
+            if(folderConfig.config.errorPages && folderConfig.config.errorPages[404]) {
+                const errorPath = path.join(path.join(__dirname, folderConfig.config.folder), folderConfig.config.errorPages[404])
+                if(fs.existsSync(errorPath)) {
+                    error404File = errorPath
+                }
+                
+            }
+            res.render(error404File, { req, res, fs, config : folderConfig, __dirname })
         }
     }
 })
