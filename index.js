@@ -13,6 +13,7 @@ app.use(fileUpload())
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
 
+
 // app.get('/', function (req, res) {
 
 // })
@@ -28,6 +29,7 @@ app.all('*', function (req, res) {
     currentPath = decodeURI(req.originalUrl.split("?")[0])
 
     var folderConfig = getFolderConfig(currentPath, config.defaultFolder, req.hostname, currentPath)
+    console.log(folderConfig)
     var formatedOriginalUrl = folderConfig.URL
 
 
@@ -108,7 +110,7 @@ app.all('*', function (req, res) {
 
 
                 });
-                res.render('onlineFolder.ejs', { req, res, childs: formatedChilds, fs, config : folderConfig })
+                res.render('onlineFolder.ejs', { req, res, childs: formatedChilds, fs, config : folderConfig, __dirname })
             } else {
                 sendFile = false
             }
@@ -132,7 +134,7 @@ app.all('*', function (req, res) {
                 } else if (filePath.endsWith('.fsconfig')) {
                     sendFile = false
                 } else if (filePath.endsWith('.ejs')) {
-                    res.render(filePath, { req, res, fs, config : folderConfig })
+                    res.render(filePath, { req, res, fs, config : folderConfig, __dirname })
                 } else {
                     res.sendFile(filePath)
                 }
