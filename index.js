@@ -157,6 +157,7 @@ app.all('*', function (req, res) {
                 }
                 
             }
+            res.status(404)
             res.render(error404File, { req, res, fs, config : folderConfig, __dirname })
         }
     }
