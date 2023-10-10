@@ -148,7 +148,7 @@ app.all('*', function (req, res) {
 
     }
     if (!sendFile) {
-        ExecuteError(404, 'errors/404.ejs', folderConfig, req, res)
+        executeError(404, 'errors/404.ejs', folderConfig, req, res)
     }
 })
 
@@ -247,7 +247,7 @@ const doesMatchFromList = function (list, str) {
     return result
 }
 
-const ExecuteError = function(code, defaultFile, folderConfig, req, res, data = null) {
+const executeError = function(code, defaultFile, folderConfig, req, res, data = null) {
     var errorFile = defaultFile
     if(folderConfig.config.errorPages && folderConfig.config.errorPages[code]) {
         const errorFilePath = path.join(path.join(__dirname, folderConfig.config.folder), folderConfig.config.errorPages[code])
