@@ -148,18 +148,7 @@ app.all('*', function (req, res) {
 
     }
     if (!sendFile) {
-        {
-            var error404File = 'errors/404.ejs'
-            if(folderConfig.config.errorPages && folderConfig.config.errorPages[404]) {
-                const errorPath = path.join(path.join(__dirname, folderConfig.config.folder), folderConfig.config.errorPages[404])
-                if(fs.existsSync(errorPath)) {
-                    error404File = errorPath
-                }
-                
-            }
-            res.status(404)
-            res.render(error404File, { req, res, fs, config : folderConfig, __dirname })
-        }
+        ExecuteError(404, 'errors/404.ejs', folderConfig, req, res)
     }
 })
 
@@ -256,6 +245,19 @@ const doesMatchFromList = function (list, str) {
         }
     });
     return result
+}
+
+const ExecuteError = function(code, defaultFile, folderConfig, req, res) {
+    var errorFile = defaultFile
+    if(folderConfig.config.errorPages && folderConfig.config.errorPages[code]) {
+        const errorFilePath = path.join(path.join(__dirname, folderConfig.config.folder), folderConfig.config.errorPages[code])
+        if(fs.existsSync(errorFilePath) && !fs.statSync(errorFilePath).isDirectory()) {
+            errorFile =  errorFilePath
+        }
+        
+    }
+    res.status(code)
+    res.render(error404File, { req, res, fs, config : folderConfig, __dirname })
 }
 
 app.listen(config.port);
