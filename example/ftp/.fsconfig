@@ -1,3 +1,4 @@
 {
-    "onlineFolder": true
+    "onlineFolder": true,
+    "errorPages" : {}
 }

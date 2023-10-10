@@ -1,6 +1,7 @@
 const express = require('express')
 const fs = require('fs')
 const path = require('path');
+const path_ = path
 const fileUpload = require('express-fileupload');
 var bodyParser = require('body-parser')
 
@@ -34,9 +35,12 @@ app.all('*', function (req, res) {
 
         try {
             var allowedHostname = false
-            if (!doesMatchFromList(folderConfig.config.allowedHostname, req.hostname)) {
+            if(folderConfig.config.allowedHostname.length > 0 && doesMatchFromList(folderConfig.config.allowedHostname, req.hostname)) {
+                    allowedHostname = true
+            } else {
                 allowedHostname = true
             }
+            
 
             var sendFile = false
             if (allowedHostname) {
@@ -111,7 +115,6 @@ app.all('*', function (req, res) {
                         var onlineFolderFile = 'onlineFolder.ejs'
                         if(folderConfig.config.onlineFolder && !(folderConfig.config.onlineFolder == true)) {
                             var potentialOnlineFolderFile = path.join(path.join(__dirname, folderConfig.config.folder), folderConfig.config.onlineFolder)
-                            console.log(potentialOnlineFolderFile)
                             if (fs.existsSync(potentialOnlineFolderFile) && !fs.statSync(potentialOnlineFolderFile).isDirectory()) {
                                 onlineFolderFile = potentialOnlineFolderFile
                             }
@@ -200,39 +203,50 @@ const getFolderConfig = function (path, workingPath, domain = '127.0.0.1', URL =
     var workingPath = workingPath.replace('\\', '/')
     path = path.replace('\\', '/')
     var leftPath = path
-
+    var FilePath = path
     if (path.endsWith('/')) {
         path = path.slice(0, -1)
     } else {
     }
     path.split('/').forEach(pathPart => {
         leftPath = leftPath.replace(pathPart + '/', '')
-        workingPath = workingPath + pathPart
-
-        var currentFsConfig = getFsConfig(workingPath + '.fsconfig')
+        var currentFsConfig = getFsConfig(path_.join(__dirname, workingPath, pathPart) + '.fsconfig')
         if (currentFsConfig) {
         } else if (!workingPath.endsWith('/')) {
             workingPath = workingPath + '/'
-            currentFsConfig = getFsConfig(workingPath + '.fsconfig')
+            currentFsConfig = getFsConfig(path_.join(__dirname, workingPath, pathPart) + '.fsconfig')
+        } 
+        if (!currentFsConfig) {
+            currentFsConfig = getFsConfig(path_.join(__dirname, workingPath, pathPart) + '\\.fsconfig')
         }
         if (currentFsConfig) {
             result = { ...result, ...currentFsConfig }
-            if (currentFsConfig.pathRewrite && currentFsConfig.pathRewrite[domain]) {
+            if (currentFsConfig.pathRewrite 
+                && currentFsConfig.pathRewrite[domain]) {
                 leftPath = currentFsConfig.pathRewrite[domain] + leftPath
-                URL = currentFsConfig.pathRewrite[domain] + URL
-                relativePath = leftPath
-                delete result.pathRewrite
+                URL = URL.substring(0, 1) +  currentFsConfig.pathRewrite[domain] + URL.substring(1)
+                relativePath = path.substring(0, 1) + leftPath
+                FilePath = leftPath
             }
-            if (currentFsConfig.folder) {
+            if (currentFsConfig.folder 
+                && currentFsConfig.folder !== workingPath) {
                 workingPath = currentFsConfig.folder
                 relativePath = leftPath
+                FilePath = leftPath
             }
-            if ((currentFsConfig.pathRewrite && currentFsConfig.pathRewrite[domain]) || currentFsConfig.folder) {
-                return getFolderConfig(leftPath, workingPath, domain, URL, result, relativePath)
+            if ((currentFsConfig.pathRewrite
+                && currentFsConfig.pathRewrite[domain])
+                || (currentFsConfig.folder &&
+                currentFsConfig.folder !== workingPath)) {
+                var newConfig = getFolderConfig(leftPath, workingPath, domain, URL, result, relativePath)
+                result = newConfig.config
+                URL = newConfig.URL
+                FilePath = newConfig.path
             }
+        } else {
         }
     });
-    return { config: result, URL, path: relativePath }
+    return { config: result, URL, path: FilePath }
 }
 
 const getFsConfig = function (path) {
