@@ -1,3 +1,6 @@
 {
-    "onlineFolder": true
+    "onlineFolder": "./docs/onlineFolder.ejs",
+    "disallowedFiles":[
+        "onlineFolder.ejs"
+    ]
 }

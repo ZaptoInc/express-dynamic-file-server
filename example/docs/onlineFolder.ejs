@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Zapto.zip</title>
+    </head>
+    <%- include('../assets/includes/header') %>
+    <body>
+
+
+        <div class="container">
+            <div class="pt-5 text-white">
+                <header class="py-5 mt-5">
+                    <h1 class="display-4 word-wrap">Docs</h1>
+                </header>
+                <ul class="list-group">
+                    <%childs.forEach(child => {
+                        if(child.isDirectory()) {
+                            %><li><a class="d-flex justify-content-between" href="./<%=child.name%>/"><div class="word-wrap"><%=child.name%></div></a></li><%
+                        } else {
+                            %><li><a class="d-flex justify-content-between" href="./<%=child.name%>"><div class="word-wrap"><%=child.name%></div></li><%
+                        }
+
+                    });%>
+                </ul>
+            </div>
+        
+            
+        </div>
+    </body>
+</html>
+    
