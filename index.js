@@ -35,12 +35,12 @@ app.all('*', function (req, res) {
 
         try {
             var allowedHostname = false
-            if(folderConfig.config.allowedHostname.length > 0 && doesMatchFromList(folderConfig.config.allowedHostname, req.hostname)) {
-                    allowedHostname = true
+            if (folderConfig.config.allowedHostname.length > 0 && doesMatchFromList(folderConfig.config.allowedHostname, req.hostname)) {
+                allowedHostname = true
             } else {
                 allowedHostname = true
             }
-            
+
 
             var sendFile = false
             if (allowedHostname) {
@@ -113,7 +113,7 @@ app.all('*', function (req, res) {
                         });
 
                         var onlineFolderFile = 'onlineFolder.ejs'
-                        if(folderConfig.config.onlineFolder && !(folderConfig.config.onlineFolder == true)) {
+                        if (folderConfig.config.onlineFolder && !(folderConfig.config.onlineFolder == true)) {
                             var potentialOnlineFolderFile = path.join(path.join(__dirname, folderConfig.config.folder), folderConfig.config.onlineFolder)
                             if (fs.existsSync(potentialOnlineFolderFile) && !fs.statSync(potentialOnlineFolderFile).isDirectory()) {
                                 onlineFolderFile = potentialOnlineFolderFile
@@ -163,7 +163,7 @@ app.all('*', function (req, res) {
             executeError(500, 'errors/500.ejs', folderConfig, req, res, error)
         }
     } catch (error) {
-        executeError(500, 'errors/500.ejs', {config : defaultPath, URL : decodeURI(req.originalUrl.split("?")[0])}, req, res, error)
+        executeError(500, 'errors/500.ejs', { config: defaultPath, URL: decodeURI(req.originalUrl.split("?")[0]) }, req, res, error)
     }
 })
 
@@ -215,20 +215,20 @@ const getFolderConfig = function (path, workingPath, domain = '127.0.0.1', URL =
         } else if (!workingPath.endsWith('/')) {
             workingPath = workingPath + '/'
             currentFsConfig = getFsConfig(path_.join(__dirname, workingPath, pathPart) + '.fsconfig')
-        } 
+        }
         if (!currentFsConfig) {
             currentFsConfig = getFsConfig(path_.join(__dirname, workingPath, pathPart) + '\\.fsconfig')
         }
         if (currentFsConfig) {
             result = { ...result, ...currentFsConfig }
-            if (currentFsConfig.pathRewrite 
+            if (currentFsConfig.pathRewrite
                 && currentFsConfig.pathRewrite[domain]) {
                 leftPath = currentFsConfig.pathRewrite[domain] + leftPath
-                URL = URL.substring(0, 1) +  currentFsConfig.pathRewrite[domain] + URL.substring(1)
+                URL = URL.substring(0, 1) + currentFsConfig.pathRewrite[domain] + URL.substring(1)
                 relativePath = path.substring(0, 1) + leftPath
                 FilePath = leftPath
             }
-            if (currentFsConfig.folder 
+            if (currentFsConfig.folder
                 && currentFsConfig.folder !== workingPath) {
                 workingPath = currentFsConfig.folder
                 relativePath = leftPath
@@ -237,7 +237,7 @@ const getFolderConfig = function (path, workingPath, domain = '127.0.0.1', URL =
             if ((currentFsConfig.pathRewrite
                 && currentFsConfig.pathRewrite[domain])
                 || (currentFsConfig.folder &&
-                currentFsConfig.folder !== workingPath)) {
+                    currentFsConfig.folder !== workingPath)) {
                 var newConfig = getFolderConfig(leftPath, workingPath, domain, URL, result, relativePath)
                 result = newConfig.config
                 URL = newConfig.URL
