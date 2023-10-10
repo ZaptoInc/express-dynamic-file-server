@@ -95,7 +95,7 @@
                 </code>
                 example 2: <br>
                 <code>
-                    &quot;onlineFolderRenderer.ejs&quot; <br>
+                    &quot;./onlineFolderRenderer.ejs&quot; <br>
                 </code>
             </p>
         </div>
@@ -134,12 +134,10 @@
             </p>
         </div>
 
-        <div class="py-5" id="pathRewrite">
-            <h2>pathRewrite </h2> <h5>Type : Dictionary(of String, String) , Default : <code>{}</code></h5>
+        <div class="py-5" id="errorPages">
+            <h2>errorPages </h2> <h5>Type : Dictionary(of String, String) , Default : <code>{}</code></h5>
             <p class="lead">
-                <strong>pathRewrite</strong> rewrites internally the urls 
-                <br>
-                this can be direct domains (<code>mydomain.com</code>) or using wildcards (<code>*.mydomain.com</code>)
+                <strong>errorPages</strong> changes the default error files to the path you specified.
                 <br>
                 example object : <br>
                 <code>
