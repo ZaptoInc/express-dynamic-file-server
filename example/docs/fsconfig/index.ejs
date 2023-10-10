@@ -83,14 +83,19 @@
         </div>
 
         <div class="py-5" id="onlineFolder">
-            <h2>onlineFolder </h2> <h5>Type : Boolean, Default : <code>false</code></h5>
+            <h2>onlineFolder </h2> <h5>Type : Boolean or String, Default : <code>false</code></h5>
             <p class="lead">
-                <strong>onlineFolder</strong> enable or disable the online folder feature to the specific folder.
+                <strong>onlineFolder</strong> enable or disable the online folder feature to the specific folder. <br>
+                Put a path to a ejs file to enable it and use it as the renderer (sets it to true)
                 <br>
                 It works like a web ftp server.<br>
-                example : <br>
+                example 1: <br>
                 <code>
-                   false <br>
+                   true <br>
+                </code>
+                example 2: <br>
+                <code>
+                    &quot;onlineFolderRenderer.ejs&quot; <br>
                 </code>
             </p>
         </div>

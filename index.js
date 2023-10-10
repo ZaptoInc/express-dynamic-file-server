@@ -106,11 +106,17 @@ app.all('*', function (req, res) {
                                 child.sizeText = getBytesText(child.size)
                                 formatedChilds.push(child)
                             }
-
-
-
                         });
-                        res.render('onlineFolder.ejs', { req, res, childs: formatedChilds, fs, config: folderConfig, __dirname })
+
+                        var onlineFolderFile = 'onlineFolder.ejs'
+                        if(folderConfig.config.onlineFolder && !(folderConfig.config.onlineFolder == true)) {
+                            var potentialOnlineFolderFile = path.join(path.join(__dirname, folderConfig.config.folder), folderConfig.config.onlineFolder)
+                            console.log(potentialOnlineFolderFile)
+                            if (fs.existsSync(potentialOnlineFolderFile) && !fs.statSync(potentialOnlineFolderFile).isDirectory()) {
+                                onlineFolderFile = potentialOnlineFolderFile
+                            }
+                        }
+                        res.render(onlineFolderFile, { req, res, childs: formatedChilds, fs, config: folderConfig, __dirname })
                     } else {
                         sendFile = false
                     }
