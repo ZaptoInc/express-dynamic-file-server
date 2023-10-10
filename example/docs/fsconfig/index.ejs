@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zapto.zip - .fsconfig Docs</title>
+    <!-- from https://stackoverflow.com/questions/54266598/meta-tags-for-url-with-description-and-image-in-skype-discord -->
+    <meta property="og:title" content="Zapto.zip - .fsconfig Docs" />
+    <meta property="og:type" content="website" />
+    <!-- <meta property="og:url" content="http://my.site.com" /> -->
+    <!-- <meta property="og:image" content="http://my.site.com/images/thumb.png" /> -->
+    <meta property="og:description" content=".fsconfig files are used to configure the current folder path or an other path" />
+    <meta name="theme-color" content="#FF0000">
+
+    <!-- Include this to make the og:image larger
+    <meta name="twitter:card" content="summary_large_image"> -->
+</head>
+<%- include('../../assets/includes/header') %>
+<body>
+
+
+
+<div class="container">
+    <div class="pt-5 text-white">
+        
+        
+
+        <header class="py-5 mt-5">
+            <h1 class="display-4">How to configure a .fsconfig file</h1>
+            <p class="lead mb-0">This can just be a file called &quot;.fsconfig&quot; at the root of the folder you want to configure, or a file in the parent folder named as the path you want to configure (for &quot;/myfolder/&quot;, do a &quot;myfolder.fsconfig&quot; config file in the parent folder)</p>
+            <!-- <p class="lead mb-0">Find it on 
+                <a href="https://github.com/ZaptoInc/zapto.zip" class="text-white">
+                    <u>GitHub</u></a>
+            </p> -->
+        </header>
+        <a href="../" class="lead mb-0">Go back</a>
+
+        <div class="py-5" id="headers">
+            <h2>headers </h2> <h5>Type : List(of Header Object) , Default : <code>[]</code></h5>
+            <p class="lead">
+                <strong>headers</strong> adds headers to urls
+                <br>
+                this can be direct domains (<code>mydomain.com</code>) or using wildcards (<code>*.mydomain.com</code>)
+                <br>
+                example : <br>
+                <code>
+                    [
+                    &nbsp;&nbsp;&nbsp; { <br>
+                    &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &quot;key&quot;: &quot;Access-Control-Allow-Origin&quot;, <br>
+                    &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &quot;value&quot;: &quot;*&quot; <br>
+                    &nbsp;&nbsp;&nbsp; } <br>
+                    ]
+                </code>
+            </p>
+        </div>
+
+        <div class="py-5" id="allowedHostname">
+            <h2>allowedHostname </h2> <h5>Type : List(of String) , Default : <code>[]</code></h5>
+            <p class="lead">
+                <strong>allowedHostname</strong> allows only certain domains names (hostnames) to access the url.
+                <br>
+                this can be direct domains (<code>mydomain.com</code>) or using wildcards (<code>*.mydomain.com</code>)
+                <br>
+                example : <br>
+                <code>
+                    [<br>
+                    &nbsp;&nbsp;&nbsp; &quot;mydomain.com&quot; <br>
+                    ]
+                </code>
+            </p>
+        </div>
+
+        <div class="py-5" id="folder">
+            <h2>folder </h2> <h5>Type : String, Default : <code>null</code></h5>
+            <p class="lead">
+                <strong>folder</strong> changes the directory of the current url or uses the default folder from the config
+                put <code>null</code> to use the uri to the default folder from the config
+            </p>
+            example : <br>
+                <code>
+                    &quot;./files&quot; <br>
+                </code>
+        </div>
+
+        <div class="py-5" id="onlineFolder">
+            <h2>onlineFolder </h2> <h5>Type : Boolean, Default : <code>false</code></h5>
+            <p class="lead">
+                <strong>onlineFolder</strong> enable or disable the online folder feature to the specific folder.
+                <br>
+                It works like a web ftp server.<br>
+                example : <br>
+                <code>
+                   false <br>
+                </code>
+            </p>
+        </div>
+
+        <div class="py-5" id="pathRewrite">
+            <h2>pathRewrite </h2> <h5>Type : Dictionary(of String, String) , Default : <code>{}</code></h5>
+            <p class="lead">
+                <strong>pathRewrite</strong> rewrites internally the urls 
+                <br>
+                this can be direct domains (<code>mydomain.com</code>) or using wildcards (<code>*.mydomain.com</code>)
+                <br>
+                example object : <br>
+                <code>
+                    { <br>
+                    &nbsp;&nbsp;&nbsp; &quot;myotherdomain.com&quot;: &quot;site2/&quot; <br>
+                    }
+                </code>
+            </p>
+        </div>
+        
+        <div class="py-5" id="disallowedFiles">
+            <h2>disallowedFiles</h2> <h5>Type : List(of String) , Default : <code>[]</code></h5>
+            <p class="lead">
+                <strong>disallowedFiles</strong> as the name sugests, disallows files to be return by the web server.
+                <br>
+                This can be direct name (<code>mypasswords.txt</code>) or using wildcards (<code>mypasswords.*</code>)
+                <br>
+                Please note that any <code>.fsconfig</code> file will automatically be blocked.<br>
+                example : <br>
+                <code>
+                    [<br>
+                    &nbsp;&nbsp;&nbsp; &quot;config.*&quot; <br>
+                    &nbsp;&nbsp;&nbsp; &quot;*.json&quot; <br>
+                    ]
+                </code>
+            </p>
+        </div>
+
+        <div class="py-5" id="pathRewrite">
+            <h2>pathRewrite </h2> <h5>Type : Dictionary(of String, String) , Default : <code>{}</code></h5>
+            <p class="lead">
+                <strong>pathRewrite</strong> rewrites internally the urls 
+                <br>
+                this can be direct domains (<code>mydomain.com</code>) or using wildcards (<code>*.mydomain.com</code>)
+                <br>
+                example object : <br>
+                <code>
+                    { <br>
+                    &nbsp;&nbsp;&nbsp; &quot;404&quot;: &quot;./errors/404.ejs&quot; <br>
+                    }
+                </code>
+            </p>
+        </div>
+    </div>
+</div>
+</body>
+</html>

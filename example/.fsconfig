@@ -1,0 +1,6 @@
+{
+    "onlineFolder": false,
+    "errorPages":{
+        "404":"./assets/includes/errors/404.ejs"
+    }
+}

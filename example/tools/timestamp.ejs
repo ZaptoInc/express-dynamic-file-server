@@ -1,0 +1,175 @@
+<%
+var mois = {
+    1 : 'janvier',
+	3 : 'février',
+	4 : 'mars',
+	5 : 'avril',
+	6 : 'mai',
+	2 : 'juin',
+	7 : 'juillet',
+	8 : 'août',
+	9 : 'septembre',
+	10 : 'octobre',
+	11 : 'novembre',
+	12 : 'décembre'
+} 
+
+var time = new Date();
+
+if(req.method == 'POST') {
+	if(req.body.submit) {
+		if(req.body.submit == 'convertir timestamp en date' &&
+		req.body.timestamp) {
+		time = new Date(req.body.timestamp * 1000)
+		} else if (req.body.submit == 'convertir date en timestamp' &&
+		req.body.year &&
+		req.body.month &&
+		req.body.day &&
+		req.body.hour &&
+		req.body.minute &&
+		req.body.second) {
+
+			time = `${req.body.month}-${req.body.day}-${req.body.year} ${req.body.hour}:${req.body.minute}:${req.body.second}`
+
+		}
+	}
+}
+
+const padL = (nr, len = 2, chr = `0`) => `${nr}`.padStart(2, chr);
+
+function getFormattedDate(date) {
+	const dt = new Date(date);
+	
+	
+	return `${
+		padL(dt.getDate())}/${
+		padL(dt.getMonth()+1)}/${
+		dt.getFullYear()} ${
+		padL(dt.getHours())}:${
+		padL(dt.getMinutes())}:${
+		padL(dt.getSeconds())}`
+}
+
+%>
+
+<!DOCTYPE html>
+<html>
+
+<head>
+	<title>timestamp - outils de conversion</title>
+	<meta name="keywords" content="timestamp, conversion timestmap, timestamp2date, date2timestamp">
+	<meta name="description"
+		content="le timestamp c'est quoi ? outils de conversion de timestamp vers date et date vers timestamp">
+	<style>
+	body {
+		margin: 10px;
+		background: #DFDFDF;
+	}
+
+	legend {
+		margin: 20px;
+		color: #970000;
+	}
+
+	fieldset {
+		border: 1px solid #970000;
+	}
+	</style>
+</head>
+
+<body>
+	<!--<div style="position:absolute;top:0;left:0;right:0;padding:20px;margin:10px;border:1px solid #970000;text-align:center;background:#d6d6d6;box-shadow:0px 0px 10px 0px rgba(0,0,0,.5);cursor:pointer" onclick="this.style.display='none'">
+		blabla
+	</div>-->
+
+	<fieldset>
+		<legend>le timestamp c'est quoi ?</legend>
+		Le timestamp (unix) désigne le nombre de secondes écoulées depuis le 1<sup>er</sup> janvier 1970 à minuit UTC
+		précise.
+		Les avantages sont multiples :
+		<ul>
+			<li>facilite la comparaison de date, puisque ca reviens a faire une differente entre 2 nombres</li>
+			<li>gérer par la plupars des langage et SGBD</li>
+			<li>universel, puisque pas de notion de fuseaux horaire</li>
+		</ul>
+		quelques inconvenients :
+		<ul>
+			<li>le nombre en lui même n'est pas parlant pour un humain, obligé de passer par un convertisseur</li>
+			<li>ne gère pas (nativement) avant 1970, donc pour gerer les dates de naissances par exemple, ce n'est pas
+				l'idéal</li>
+		</ul>
+		par exemple, actuellement, en timestamp, il est : <%=Math.floor(new Date().getTime() / 1000)%> ( heure du serveur )
+	</fieldset>
+
+	<fieldset>
+		<legend>convertisseur timestamp vers date</legend>
+		<form action="?" method="POST">
+			<input type="hidden" name="action" value="timestamp2date">
+			timestamp à convertir : <input type="number" name="timestamp" value="<%=Math.floor(new Date(time).getTime() / 1000)%>">
+			<br>
+			résultat : le <%=getFormattedDate(time)%><br>
+			<input type="submit" name="submit" value="convertir timestamp en date">
+		</form>
+	</fieldset>
+
+	<fieldset>
+		<legend>convertisseur date vers timestamp</legend>
+		<form method="POST">
+			date a convertir (année - mois - jour - heure - minute - seconde):<br>
+			<select name="year">
+				<%
+				for (let i = new Date().getFullYear() + 10; i >= 1970; i--) {
+					var selected = i == new Date(time).getFullYear() ? 'selected' : '';
+					%><option value="<%=i%>" <%=selected%>><%=i%></option><%
+				}
+				%>	
+			</select>
+			<select name="month">
+				<%
+				for (let i = 1; i <= 12; i++) {
+					var selected = i == new Date(time).getMonth() + 1 ? 'selected' : '';
+					%><option value="<%=i%>" <%=selected%>><%=mois[i]%></option><%
+				}
+				%>
+			</select>
+			<select name="day">
+				<%
+				for (let i = 1; i <= 31; i++) {
+					var selected = i == new Date(time).getDate() ? 'selected' : '';
+					%><option value="<%=i%>" <%=selected%>><%=i%></option><%
+				}
+				%>
+			</select>
+			<select name="hour">
+				<%
+				for (let i = 0; i <= 23; i++) {
+					var selected = i == new Date(time).getHours() ? 'selected' : '';
+					%><option value="<%=i%>" <%=selected%>><%=i%></option><%
+				}
+				%>
+			</select>
+			<select name="minute">
+				<%
+				for (let i = 0; i <= 59; i++) {
+					var selected = i == new Date(time).getMinutes() ? 'selected' : '';
+					%><option value="<%=i%>" <%=selected%>><%=i%></option><%
+				}
+				%>
+			</select>
+			<select name="second">
+				<%
+				for (let i = 0; i <= 59; i++) {
+					var selected = i == new Date(time).getSeconds() ? 'selected' : '';
+					%><option value="<%=i%>" <%=selected%>><%=i%></option><%
+				}
+				%>
+			</select>
+			
+			<br>
+			résultat : timestamp : <?=$time?> <br>
+			<input type="submit" name="submit" value="convertir date en timestamp">
+		</form>
+	</fieldset>
+
+</body>
+</html>

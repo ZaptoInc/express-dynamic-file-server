@@ -1,0 +1,12 @@
+{
+    "headers": [
+        {
+            "key": "Access-Control-Allow-Origin",
+            "value": "*"
+        }
+    ],
+    "onlineFolder": true,
+    "disallowedFiles":[
+        "includes"
+    ]
+}
