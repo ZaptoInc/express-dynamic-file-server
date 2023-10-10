@@ -23,132 +23,138 @@ app.use(bodyParser.json())
 // })
 
 app.all('*', function (req, res) {
+    try {
 
-    console.log(`${req.method} ${req.hostname}${req.originalUrl}`)
+        console.log(`${req.method} ${req.hostname}${req.originalUrl}`)
 
-    currentPath = decodeURI(req.originalUrl.split("?")[0])
+        currentPath = decodeURI(req.originalUrl.split("?")[0])
 
-    var folderConfig = getFolderConfig(currentPath, config.defaultFolder, req.hostname, currentPath)
-    console.log(folderConfig)
-    var formatedOriginalUrl = folderConfig.URL
-
-
-    var allowedHostname = false
-    if(!doesMatchFromList(folderConfig.config.allowedHostname, req.hostname)) {
-        allowedHostname = true
-    }
-
-    var sendFile = false
-    if (allowedHostname) {
-
-
-        var folder = config.defaultFolder
-        if (folderConfig.config.folder) {
-            folder = folderConfig.config.folder
+        var folderConfig = getFolderConfig(currentPath, config.defaultFolder, req.hostname, currentPath)
+        console.log(folderConfig)       
+        var formatedOriginalUrl = folderConfig.URL
+try {
+        var allowedHostname = false
+        if (!doesMatchFromList(folderConfig.config.allowedHostname, req.hostname)) {
+            allowedHostname = true
         }
-        if (folderConfig.config.protection) {
-            //todo
-        } else {
-            sendFile = true
+
+        var sendFile = false
+        if (allowedHostname) {
+
+
+            var folder = config.defaultFolder
+            if (folderConfig.config.folder) {
+                folder = folderConfig.config.folder
+            }
+            if (folderConfig.config.protection) {
+                //todo
+            } else {
+                sendFile = true
+            }
         }
-    }
 
-    if (sendFile) {
-        var filePath = path.join(path.join(__dirname, folder), folderConfig.path)
+        if (sendFile) {
+            var filePath = path.join(path.join(__dirname, folder), folderConfig.path)
 
-        var pathIsFolder = false
-        if (formatedOriginalUrl.endsWith('/')) {
-            pathIsFolder = true
-            if (fs.existsSync(filePath + "/index.ejs")) {
-                var fileStat = fs.statSync(filePath + "/index.ejs")
-                if (fileStat && !fileStat.isDirectory()) {
-                    filePath = filePath + "/index.ejs"
-                    pathIsFolder = false
-                }
-            } else
-                if (fs.existsSync(filePath + "/index.html")) {
-                    var fileStat = fs.statSync(filePath + "/index.html")
+            var pathIsFolder = false
+            if (formatedOriginalUrl.endsWith('/')) {
+                pathIsFolder = true
+                if (fs.existsSync(filePath + "/index.ejs")) {
+                    var fileStat = fs.statSync(filePath + "/index.ejs")
                     if (fileStat && !fileStat.isDirectory()) {
-                        filePath = filePath + "/index.html"
+                        filePath = filePath + "/index.ejs"
                         pathIsFolder = false
                     }
-                }
-            if (!fs.existsSync(filePath)) {
-                pathIsFolder = false
-            }
-        }
-
-        folderConfig.config.headers.forEach(header => {
-            res.append(header.key, header.value)
-        });
-
-        if (pathIsFolder) {
-            if (folderConfig.config.onlineFolder) {
-                var childs = fs.readdirSync(filePath, { withFileTypes: true }).sort(function (a, b) {
-                    if (a.isDirectory() && !b.isDirectory()) {
-                        return -1
-                    } else if (!a.isDirectory() && b.isDirectory()) {
-                        return 1
-                    } else {
-                        return 0
-                    }
-                })
-                var formatedChilds = []
-                childs.forEach(child => {
-                    if (!child.name.endsWith(".fsconfig") && !doesMatchFromList(folderConfig.config.disallowedFiles, child.name)) {
-                        var fullChildPath = path.join(filePath, child.name)
-                        if (child.isDirectory()) {
-                            child.size = getFolderSize(fullChildPath)
-                        } else {
-                            var childStat = fs.statSync(fullChildPath)
-                            child.size = childStat.size
+                } else
+                    if (fs.existsSync(filePath + "/index.html")) {
+                        var fileStat = fs.statSync(filePath + "/index.html")
+                        if (fileStat && !fileStat.isDirectory()) {
+                            filePath = filePath + "/index.html"
+                            pathIsFolder = false
                         }
-                        child.sizeText = getBytesText(child.size)
-                        formatedChilds.push(child)
                     }
+                if (!fs.existsSync(filePath)) {
+                    pathIsFolder = false
+                }
+            }
+
+            folderConfig.config.headers.forEach(header => {
+                res.append(header.key, header.value)
+            });
+
+            if (pathIsFolder) {
+                if (folderConfig.config.onlineFolder) {
+                    var childs = fs.readdirSync(filePath, { withFileTypes: true }).sort(function (a, b) {
+                        if (a.isDirectory() && !b.isDirectory()) {
+                            return -1
+                        } else if (!a.isDirectory() && b.isDirectory()) {
+                            return 1
+                        } else {
+                            return 0
+                        }
+                    })
+                    var formatedChilds = []
+                    childs.forEach(child => {
+                        if (!child.name.endsWith(".fsconfig") && !doesMatchFromList(folderConfig.config.disallowedFiles, child.name)) {
+                            var fullChildPath = path.join(filePath, child.name)
+                            if (child.isDirectory()) {
+                                child.size = getFolderSize(fullChildPath)
+                            } else {
+                                var childStat = fs.statSync(fullChildPath)
+                                child.size = childStat.size
+                            }
+                            child.sizeText = getBytesText(child.size)
+                            formatedChilds.push(child)
+                        }
 
 
 
-                });
-                res.render('onlineFolder.ejs', { req, res, childs: formatedChilds, fs, config : folderConfig, __dirname })
+                    });
+                    res.render('onlineFolder.ejs', { req, res, childs: formatedChilds, fs, config: folderConfig, __dirname })
+                } else {
+                    sendFile = false
+                }
             } else {
-                sendFile = false
-            }
-        } else {
 
-            var fileStat = null
-            if (fs.existsSync(filePath)) {
-                fileStat = fs.statSync(filePath)
-            }
-
-            if ((!fileStat || fileStat.isDirectory()) && fs.existsSync(filePath + '.ejs')) {
-                filePath = filePath + '.ejs'
+                var fileStat = null
                 if (fs.existsSync(filePath)) {
                     fileStat = fs.statSync(filePath)
                 }
-            }
 
-            if (fileStat && !fileStat.isDirectory()) {
-                if (doesMatchFromList(folderConfig.config.disallowedFiles, filePath)) {
-                    sendFile = false
-                } else if (filePath.endsWith('.fsconfig')) {
-                    sendFile = false
-                } else if (filePath.endsWith('.ejs')) {
-                    res.render(filePath, { req, res, fs, config : folderConfig, __dirname })
-                } else {
-                    res.sendFile(filePath)
+                if ((!fileStat || fileStat.isDirectory()) && fs.existsSync(filePath + '.ejs')) {
+                    filePath = filePath + '.ejs'
+                    if (fs.existsSync(filePath)) {
+                        fileStat = fs.statSync(filePath)
+                    }
                 }
 
-            } else {
-                sendFile = false
+                if (fileStat && !fileStat.isDirectory()) {
+                    if (doesMatchFromList(folderConfig.config.disallowedFiles, filePath)) {
+                        sendFile = false
+                    } else if (filePath.endsWith('.fsconfig')) {
+                        sendFile = false
+                    } else if (filePath.endsWith('.ejs')) {
+                        res.render(filePath, { req, res, fs, config: folderConfig, __dirname })
+                    } else {
+                        res.sendFile(filePath)
+                    }
+
+                } else {
+                    sendFile = false
+                }
             }
+
+
+
         }
-
-
-
+        if (!sendFile) {
+            executeError(404, 'errors/404.ejs', folderConfig, req, res)
+        }
+    } catch (error) {
+        executeError(500, 'errors/500.ejs', folderConfig, req, res, error)
     }
-    if (!sendFile) {
-        executeError(404, 'errors/404.ejs', folderConfig, req, res)
+    } catch (error) {
+        executeError(500, 'errors/500.ejs', defaultPath, req, res, error)
     }
 })
 
@@ -247,17 +253,17 @@ const doesMatchFromList = function (list, str) {
     return result
 }
 
-const executeError = function(code, defaultFile, folderConfig, req, res, data = null) {
+const executeError = function (code, defaultFile, folderConfig, req, res, data = null) {
     var errorFile = defaultFile
-    if(folderConfig.config.errorPages && folderConfig.config.errorPages[code]) {
+    if (folderConfig.config.errorPages && folderConfig.config.errorPages[code]) {
         const errorFilePath = path.join(path.join(__dirname, folderConfig.config.folder), folderConfig.config.errorPages[code])
-        if(fs.existsSync(errorFilePath) && !fs.statSync(errorFilePath).isDirectory()) {
-            errorFile =  errorFilePath
+        if (fs.existsSync(errorFilePath) && !fs.statSync(errorFilePath).isDirectory()) {
+            errorFile = errorFilePath
         }
-        
+
     }
     res.status(code)
-    res.render(error404File, { req, res, fs, config : folderConfig, __dirname, data })
+    res.render(error404File, { req, res, fs, config: folderConfig, __dirname, data })
 }
 
 app.listen(config.port);
