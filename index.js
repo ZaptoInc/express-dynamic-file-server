@@ -247,7 +247,7 @@ const doesMatchFromList = function (list, str) {
     return result
 }
 
-const ExecuteError = function(code, defaultFile, folderConfig, req, res) {
+const ExecuteError = function(code, defaultFile, folderConfig, req, res, data = null) {
     var errorFile = defaultFile
     if(folderConfig.config.errorPages && folderConfig.config.errorPages[code]) {
         const errorFilePath = path.join(path.join(__dirname, folderConfig.config.folder), folderConfig.config.errorPages[code])
@@ -257,7 +257,7 @@ const ExecuteError = function(code, defaultFile, folderConfig, req, res) {
         
     }
     res.status(code)
-    res.render(error404File, { req, res, fs, config : folderConfig, __dirname })
+    res.render(error404File, { req, res, fs, config : folderConfig, __dirname, data })
 }
 
 app.listen(config.port);
