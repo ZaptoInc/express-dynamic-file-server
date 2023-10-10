@@ -14,15 +14,6 @@ app.use(fileUpload())
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
 
-
-// app.get('/', function (req, res) {
-
-// })
-
-// app.get('/admin', function (req, res) {
-
-// })
-
 app.all('*', function (req, res) {
     try {
 
