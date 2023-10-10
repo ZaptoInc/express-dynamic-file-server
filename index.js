@@ -154,7 +154,7 @@ app.all('*', function (req, res) {
             executeError(500, 'errors/500.ejs', folderConfig, req, res, error)
         }
     } catch (error) {
-        executeError(500, 'errors/500.ejs', defaultPath, req, res, error)
+        executeError(500, 'errors/500.ejs', {config : defaultPath, URL : decodeURI(req.originalUrl.split("?")[0])}, req, res, error)
     }
 })
 
@@ -263,7 +263,7 @@ const executeError = function (code, defaultFile, folderConfig, req, res, data =
 
     }
     res.status(code)
-    res.render(error404File, { req, res, fs, config: folderConfig, __dirname, data })
+    res.render(errorFile, { req, res, fs, config: folderConfig, __dirname, data })
 }
 
 app.listen(config.port);
