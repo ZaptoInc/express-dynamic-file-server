@@ -15,6 +15,8 @@ app.use(fileUpload()); //use the fileupload middleware
 app.use(bodyParser.urlencoded({ extended: false })); //parse url encoded body
 app.use(bodyParser.json()); //parse json body
 
+const rendererParams = {fs, __dirname, require}; //parameters to send to the renderer
+
 //manage all requests for any methods
 app.all('*', function (req, res) {
     try {
@@ -126,7 +128,7 @@ app.all('*', function (req, res) {
                             }
                         }
                         //render the onlineFolderRenderer
-                        res.render(onlineFolderRenderer, { req, res, childs: formatedChilds, fs, config: folderConfig, __dirname });
+                        res.render(onlineFolderRenderer, { ...rendererParams, req, res, childs: formatedChilds, config: folderConfig });
                     } else {
                         sendFile = false;
                     }
@@ -155,7 +157,7 @@ app.all('*', function (req, res) {
                             } else
                                 // if the file is a ejs, render it, else send it as is
                                 if (filePath.endsWith('.ejs')) {
-                                    res.render(filePath, { req, res, fs, config: folderConfig, __dirname });
+                                    res.render(filePath, { ...rendererParams, req, res, config: folderConfig });
                                 } else {
                                     res.sendFile(filePath);
                                 }
@@ -336,7 +338,7 @@ const executeError = function (code, defaultFile, folderConfig, req, res, data =
 
     }
     res.status(code)
-    res.render(errorFile, { req, res, fs, config: folderConfig, __dirname, data })
+    res.render(errorFile, { ...rendererParams, req, res, config: folderConfig, data })
 }
 
 //make the express app listen on the config port
