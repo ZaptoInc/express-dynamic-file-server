@@ -28,9 +28,11 @@ app.all('*', function (req, res) {
         try {
             var allowedHostname = false;
             //if the folderConfig allowedHostname is not empty and if the hostname is in allowedHostname
-            if (doesMatchFromList(folderConfig.config.allowedHostname, req.hostname)) {
-                allowedHostname = true;
-            } else if (folderConfig.config.allowedHostname.length > 0) {
+            if(folderConfig.config.allowedHostname.length > 0) {
+                if (doesMatchFromList(folderConfig.config.allowedHostname, req.hostname)) {
+                    allowedHostname = true;
+                }
+            } else {
                 allowedHostname = true;
             }
 
@@ -330,7 +332,6 @@ const executeError = function (code, defaultFile, folderConfig, req, res, data =
         const errorFilePath = path.join(path.join(__dirname, folderConfig.config.folder), folderConfig.config.errorPages[code])
         if (fs.existsSync(errorFilePath)
             && !fs.statSync(errorFilePath).isDirectory()) {
-            errorFile = errorFilePath;
         }
 
     }
