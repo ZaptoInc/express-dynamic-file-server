@@ -4,6 +4,7 @@ const path = require('path'); //import path
 const path_ = path; //declare path_ as path (if path is used as a variable)
 const fileUpload = require('express-fileupload'); //import express-fileupload
 var bodyParser = require('body-parser'); //import body-parser
+const cookieParser = require('cookie-parser');
 
 const config = require('./config.json'); //import the config file
 const Default = require('./default.js'); // import the default values
@@ -14,6 +15,7 @@ const app = express(); //initiate an express app
 app.use(fileUpload()); //use the fileupload middleware
 app.use(bodyParser.urlencoded({ extended: false })); //parse url encoded body
 app.use(bodyParser.json()); //parse json body
+app.use(cookieParser()); //parse cookies
 
 const rendererParams = {fs, __dirname, require}; //parameters to send to the renderer
 
