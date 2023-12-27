@@ -1,8 +1,8 @@
 <h2>Files and folders for <%=decodeURI(req.originalUrl.split("?")[0])%></h2>
 <ul>
-    <%if(req.originalUrl !== '/') {%> 
-        <li><a href="../">../</a></li>
-    <%}
+  <%if(req.originalUrl !== '/') {%>
+  <li><a href="../">../</a></li>
+  <%}
     childs.forEach(child => {
         if(child.isDirectory()) {
             %><li><a href="./<%=child.name%>/"><%=child.name%>/</a></li><%
