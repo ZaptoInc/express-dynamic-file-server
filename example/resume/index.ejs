@@ -1,0 +1,301 @@
+<%
+
+const path = require("path") //define path
+
+//#region config
+let configPath = path.join(__dirname, "/example/resume/config.json") //config path
+
+delete require.cache[require.resolve(configPath)]; //removes the config from the cache
+let config = require(configPath) //define config
+//#endregion
+
+//#region locale
+const defaultLocale = "en" //define default locale
+
+let browserLocales = [] //define the client supported locales
+browserLocales.push(defaultLocale) //push default locale
+let currentLocale = req.query.lang ? req.query.lang : browserLocales[0] //define the current locale
+if(!config.locales.includes(currentLocale)) currentLocale = defaultLocale //if the current locale is not supported it's set as the default locale
+//#endregion
+
+//#region data
+let dataPath = `${__dirname}/example/resume/locale/${currentLocale}.json` //data path
+delete require.cache[require.resolve(dataPath)]; //removes the data from the cache
+let data = require(dataPath) //define data
+//#endregion
+
+
+let getTimestamp = function(date) {
+    var myDate = date.split(/-|\//);
+var newDate = new Date( myDate[2], myDate[1] - 1, myDate[0]);
+return Math.round(newDate.getTime() / 1000);
+} //returns the timestamp from the date
+
+let getFormat = function(date) {
+    var myDate = date.split(/-|\//);
+    return myDate.slice(-1)
+} //returns the formatting from the date
+%>
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <meta name="description" content="" />
+  <meta name="author" content="<%= data.about.firstname %> <%= data.about.lastname %>" />
+  <title><%= data.locale.resume %> - <%= data.about.firstname %> <%= data.about.lastname %></title>
+  <link rel="icon" type="image/x-icon" href="/assets/img/resume.ico" />
+  <!-- Font Awesome icons (free version)-->
+  <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
+  <!-- Google fonts-->
+  <link href="https://fonts.googleapis.com/css?family=Saira+Extra+Condensed:500,700" rel="stylesheet" type="text/css" />
+  <link href="https://fonts.googleapis.com/css?family=Muli:400,400i,800,800i" rel="stylesheet" type="text/css" />
+  <!-- Core theme CSS (includes Bootstrap)-->
+  <link href="/assets/css/resume/styles.css" rel="stylesheet" />
+  <link href="/assets/css/resume/print.css" rel="stylesheet" />
+  <link href="/assets/css/flag-icons.css" rel="stylesheet" />
+</head>
+
+<body id="page-top">
+  <% if((data.about && data.about.picture) || data.experiences || data.education || data.skills || data.interests || data.awards || config.locales.length > 1) { %>
+  <!-- Navigation-->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-primary fixed-top web-only" id="sideNav">
+    <div class="navbar-langs">
+      <% for (const locale of config.locales) { %>
+
+      <a href="<%- config.url %>?lang=<%= locale %>"><span class="me-1 ms-1 fi fi-<%- locale %>"></span></a>
+      <% } %>
+    </div>
+    <a class="navbar-brand js-scroll-trigger" href="#page-top">
+      <span class="d-block d-lg-none">
+        <title><%= data.locale.resume %> - <%= data.about.firstname %> <%= data.about.lastname %></title>
+      </span>
+      <% if(data.about && data.about.picture) { %>
+      <span class="d-none d-lg-block"><img class="img-fluid img-profile rounded-circle mx-auto mb-2" src="<%= data.about.picture %>" onerror="this.style.display='none'" /></span>
+      <% } %>
+
+    </a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarResponsive">
+      <ul class="navbar-nav">
+        <li class="nav-item"><a class="nav-link js-scroll-trigger" href="#about"><%= data.locale.about %></a></li>
+        <% if(data.experiences) { %>
+        <li class="nav-item"><a class="nav-link js-scroll-trigger" href="#experiences"><%= data.locale.experiences %></a></li>
+        <% } if(data.education) { %>
+        <li class="nav-item"><a class="nav-link js-scroll-trigger" href="#education"><%= data.locale.education %></a></li>
+        <% } if(data.skills) { %>
+        <li class="nav-item"><a class="nav-link js-scroll-trigger" href="#skills"><%= data.locale.skills %></a></li>
+        <% } if(data.interests) { %>
+        <li class="nav-item"><a class="nav-link js-scroll-trigger" href="#interests"><%= data.locale.interests %></a></li>
+        <% } if(data.awards) { %>
+        <li class="nav-item"><a class="nav-link js-scroll-trigger" href="#awards"><%= data.locale.awards %></a></li>
+        <% } %>
+      </ul>
+    </div>
+  </nav>
+  <% } %>
+  <!-- Page Content-->
+  <div class="container-fluid p-0">
+    <!-- About-->
+    <section class="resume-section" id="about">
+      <div class="resume-section-content">
+        <h1 class="mb-0">
+          <%= data.about.firstname %>
+          <span class="text-primary"><%= data.about.lastname %></span>
+          <span class="h4">
+            <span class="d-unix web-only">
+              <span class="d-unix-data" data-timestamp="<%= getTimestamp(data.about.birthday) %>" data-style="<%= getFormat(data.about.birthday) %>"></span>
+            </span>
+            <span class="d-unix print-only">
+              <span class="d-unix-data" data-timestamp="<%= getTimestamp(data.about.birthday) %>" data-style="d"></span>
+            </span>
+          </span>
+        </h1>
+        <% if(data.about.title) { %>
+        <h3 class="text-secondary">
+          <%= data.about.title %>
+        </h3>
+        <% } %>
+        <% if(data.contact) { %>
+        <div class="subheading mb-3">
+          <% 
+          let contactInfos = []
+           if (data.contact.address) contactInfos.push(data.contact.address)
+           if (data.contact.phone) {
+            try {
+              let libphone = require("libphonenumber-js/max")
+              let phone = libphone.parsePhoneNumber(data.contact.phone)
+              contactInfos.push(`<a href="mailto:${phone.getURI()}">${phone.formatInternational()}</a>`)
+            } catch (error) {
+              contactInfos.push(data.contact.phone)
+            }
+           }
+           if (data.contact.email) contactInfos.push(`<a href="mailto:${data.contact.email}">${data.contact.email}</a>`)
+           %>
+          <%- contactInfos.join(' · ') %>
+        </div>
+        <% } %>
+        <% if(data.socials && data.socials.length) { %>
+        <div class="social-icons mb-5">
+          <% for (const social of data.socials) { %>
+          <a class="social-icon web-only" <% if(social.text) { %> data-toggle="tooltip" data-placement="top" title="<%= social.text %>" <% } %> href=" <%= social.url ? social.url : '#' %>" <%= social.url ? 'target="_blank"' : '' %>><i class="<%= social.classes %>"></i></a>
+          <% } %>
+          <ul class="fa-ul mb-3 print-only">
+            <% for (const social of data.socials) { %>
+            <li>
+              <span class="fa-li"><i class="<%= social.classes %>"></i></span>
+              <a href="<%= social.url %>" target="_blank" rel="noopener noreferrer"><%= social.url %></a><br class="print-link">
+            </li>
+            <% } %>
+          </ul>
+        </div>
+        <% } %>
+        <p class="lead mb-5"><%- data.about.description %></p>
+      </div>
+    </section>
+    <hr class="m-0" />
+    <% if(data.experiences) { %>
+    <!-- Experiences-->
+    <section class="resume-section" id="experiences">
+      <div class="resume-section-content">
+        <h2 class="mb-5"><%= data.locale.experiences %></h2>
+        <% for (const experience of data.experiences) { %>
+        <div class="d-flex flex-column flex-md-row justify-content-between mb-5">
+          <div class="flex-grow-1">
+            <h3 class="mb-0"><%= experience.title %></h3>
+            <div class="subheading mb-3"><%= experience.name %> <% if(experience.address) { %> - <%= experience.address %><% } %></div>
+            <% if(experience.description) { %>
+            <p><%- experience.description %></p>
+            <% } %>
+          </div>
+          <div class="flex-shrink-0">
+            <span class="text-primary">
+              <span class="d-unix">
+                <span class="d-unix-data" data-timestamp="<%= getTimestamp(experience.started) %>" data-style="<%= getFormat(experience.started) %>"></span>
+              </span>
+              <% if(experience.ended || experience.current) { %> - <% } %>
+              <% if(experience.current) { %> <%= data.locale.currently %> <% } else if(experience.ended) { %>
+              <span class="d-unix">
+                <span class="d-unix-data" data-timestamp="<%= getTimestamp(experience.ended) %>" data-style="<%= getFormat(experience.ended) %>"></span>
+              </span> <% } %>
+            </span>
+          </div>
+        </div>
+        <% } %>
+      </div>
+    </section>
+    <hr class="m-0" />
+    <% } if(data.education) { %>
+    <!-- Education-->
+    <section class="resume-section" id="education">
+      <div class="resume-section-content">
+        <h2 class="mb-5"><%= data.locale.education %></h2>
+        <% for (const experience of data.education) { %>
+        <div class="d-flex flex-column flex-md-row justify-content-between mb-5">
+          <div class="flex-grow-1">
+            <h3 class="mb-0"><%= experience.title %></h3>
+            <div class="subheading mb-3"><%= experience.name %> <% if(experience.address) { %> - <%= experience.address %><% } %></div>
+            <% if(experience.description) { %>
+            <p><%- experience.description %></p>
+            <% } %>
+          </div>
+          <div class="flex-shrink-0">
+            <span class="text-primary">
+              <span class="d-unix">
+                <span class="d-unix-data" data-timestamp="<%= getTimestamp(experience.started) %>" data-style="<%= getFormat(experience.started) %>"></span>
+              </span>
+              <% if(experience.ended || experience.current) { %> - <% } %>
+              <% if(experience.current) { %> <%= data.locale.currently %> <% } else if(experience.ended) { %>
+              <span class="d-unix">
+                <span class="d-unix-data" data-timestamp="<%= getTimestamp(experience.ended) %>" data-style="<%= getFormat(experience.ended) %>"></span>
+              </span> <% } %>
+            </span>
+          </div>
+        </div>
+        <% } %>
+      </div>
+    </section>
+    <hr class="m-0" />
+    <% } if(data.skills) { %>
+    <!-- Skills-->
+    <section class="resume-section" id="skills">
+      <div class="resume-section-content">
+        <h2 class="mb-5"><%= data.locale.skills %></h2>
+        <% for (const skillCategory of data.skills) { %>
+        <div class="subheading mb-3"><%= skillCategory.category %></div>
+        <% if(skillCategory.inline) { %>
+        <ul class="list-inline dev-icons">
+          <% for (const skill of skillCategory.childs) { %>
+          <li class="list-inline-item" <% if(skill.text) { %> data-toggle="tooltip" data-placement="top" title="<%= skill.text %>" <% } %>><% if(skill.classes) { %> <i class="<%= skill.classes %>"></i> <% } else if(skill.svg_base64) { %> <%- new Buffer(skill.svg_base64, 'base64').toString('ascii') %><% } %></li>
+          <% } %>
+        </ul>
+        <% } else { %>
+        <ul class="fa-ul mb-3">
+          <% for (const skill of skillCategory.childs) { %>
+          <li>
+            <span class="fa-li"><i class="<%= skill.classes %>"></i></span>
+            <%= skill.text %>
+          </li>
+          <% } %>
+        </ul>
+        <% }} %>
+      </div>
+    </section>
+    <hr class="m-0" />
+    <% } if(data.interests) { %>
+    <!-- Interests-->
+    <section class="resume-section" id="interests">
+      <div class="resume-section-content">
+        <h2 class="mb-5"><%= data.locale.interests %></h2>
+        <% for (const interest of data.interests) { %>
+        <p><%- interest %></p>
+        <% } %>
+      </div>
+    </section>
+    <hr class="m-0" />
+    <% } if(data.awards) { %>
+    <!-- Awards-->
+    <section class="resume-section" id="awards">
+      <div class="resume-section-content">
+        <h2 class="mb-5"><%= data.locale.awards %></h2>
+        <% for (const award of data.awards) { %>
+        <div class="d-flex flex-column flex-md-row justify-content-between mb-5">
+          <div class="flex-grow-1">
+
+            <a <% if(award.url) { %>href="<%= award.url %>" target="_blank" <% } %>>
+              <h3 class="mb-0"><%= award.title %></h3>
+            </a>
+
+            <div class="subheading mb-3"><%= award.name %> <% if(award.address) { %> - <%= award.address %><% } %></div>
+            <% if(award.description) { %>
+            <p><%= award.description %></p>
+            <% } %>
+          </div>
+          <div class="flex-shrink-0">
+            <span class="text-primary">
+              <span class="d-unix">
+                <span class="d-unix-data" data-timestamp="<%= getTimestamp(award.date) %>" data-style="<%= getFormat(award.date) %>"></span>
+              </span>
+            </span>
+          </div>
+        </div>
+        <% } %>
+      </div>
+    </section>
+    <% } %>
+  </div>
+  <script src="/assets/js/jquery.min.js"></script>
+  <script src="/assets/js/moment-with-locales.js" onload="moment.locale('<%= data.locale.code %>')"></script>
+  <script src="/assets/js/livestamp.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js"></script>
+  <!-- Bootstrap core JS-->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- Core theme JS-->
+  <script src="/assets/js/resume/scripts.js"></script>
+</body>
+
+</html>

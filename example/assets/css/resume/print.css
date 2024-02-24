@@ -1,0 +1,21 @@
+@media print {
+  body {
+    padding-left: 3rem !important;
+    padding-right: 3rem !important;
+  }
+  hr {
+    display: none !important;
+  }
+  section {
+    page-break-after: always;
+  }
+  .web-only {
+    display: none !important;
+  }
+}
+
+@media not print {
+  .print-only {
+    display: none !important;
+  }
+}

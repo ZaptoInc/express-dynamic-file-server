@@ -1,0 +1,192 @@
+{
+  "about": {
+    "firstname": "Monsieur",
+    "lastname": "X",
+    "title": "Page d'example",
+    "birthday": "11/12/1985/R",
+    "description": "Je suis un simple example de CV en ligne<br>On peut utiliser de l'<b>HTML</b> dans les descriptions<br>L'affichage sur les pages en impression est optimisée",
+    "picture": null
+  },
+  "contact": {
+    "address": "Champ de Mars, 5 Av. Anatole France, 75007 Paris",
+    "phone": "+33123456789",
+    "email": "email@example.com"
+  },
+  "socials": [
+    {
+      "classes": "fab fa-github",
+      "text": "Github",
+      "url": "https://github.com/ZaptoInc/express-dynamic-file-server"
+    },
+    {
+      "classes": "fa-solid fa-font-awesome",
+      "text": "Font Awesome",
+      "url": "https://fontawesome.com/search"
+    }
+  ],
+  "experiences": [
+    {
+      "title": "Travail actuel",
+      "name": "Nom de l'entreprise",
+      "address": "Une adresse d'affichage",
+      "description": null,
+      "started": "07/10/2023/S",
+      "ended": null,
+      "current": true
+    },
+    {
+      "title": "Un ancien travail",
+      "name": "Zapto",
+      "address": "Partout, France",
+      "description": null,
+      "started": "13/03/2023/S",
+      "ended": "10/05/2023/S",
+      "current": false
+    },
+    {
+      "title": "Un travail de courte durée",
+      "name": "Zapto",
+      "address": "Paris",
+      "started": "01/04/2019/S",
+      "ended": null,
+      "current": false
+    }
+  ],
+  "education": [
+    {
+      "title": "Cours actuel",
+      "name": "École",
+      "address": "Le Cloud",
+      "description": "Ici vous pouvez mettre une description des cours (l'<b>HTML</b> marche aussi ici)",
+      "started": "01/10/2022/S",
+      "current": true
+    },
+    {
+      "title": "Cours avec description vide",
+      "name": "Discord",
+      "address": "Internet",
+      "description": "‎",
+      "started": "01/09/2020/S",
+      "ended": "01/07/2022/S",
+      "current": false
+    },
+    {
+      "title": "Un Cours sans description",
+      "name": "Toujours une école",
+      "address": "Dans ton cerveau",
+      "description": null,
+      "started": "01/06/2016/S",
+      "ended": null,
+      "current": false
+    }
+  ],
+  "skills": [
+    {
+      "category": "Programmation",
+      "inline": true,
+      "childs": [
+        {
+          "classes": "fab fa-html5",
+          "text": "HTML"
+        },
+        {
+          "classes": "fab fa-js-square",
+          "text": "JavaScript"
+        },
+        {
+          "classes": "fa-brands fa-bootstrap",
+          "text": "Bootstrap"
+        },
+        {
+          "classes": "fab fa-node-js",
+          "text": "Node.js"
+        },
+        {
+          "classes": "fab fa-npm",
+          "text": "NPM"
+        },
+        {
+          "classes": "fa-brands fa-cloudflare",
+          "text": "Cloudflare"
+        },
+        {
+          "classes": "fa-brands fa-aws",
+          "text": "AWS"
+        }
+      ]
+    },
+    {
+      "category": "Outils and Programmes",
+      "inline": true,
+      "childs": [
+        {
+          "classes": "fab fa-git",
+          "text": "Git"
+        },
+        {
+          "classes": "fa-brands fa-trello",
+          "text": "Trello"
+        },
+        {
+          "svg_base64": "PHN2ZyBjbGFzcz0ic3ZnLWlubGluZS0tZmEgZmEtc2FwIiBhcmlhLWhpZGRlbj0idHJ1ZSIgZm9jdXNhYmxlPSJmYWxzZSIgZGF0YS1wcmVmaXg9ImZhYiIgZGF0YS1pY29uPSJzYXAiIHJvbGU9ImltZyIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB2aWV3Qm94PSIyNTYgMjU2IDUxMiA1MTIiIGRhdGEtZmEtaTJzdmc9IiI+PHBhdGggZmlsbD0iY3VycmVudENvbG9yIiBkPSJNMjU2IDM1OS44OHYzMDQuMjRoMzEwLjgyTDg3MSAzNTkuODh6bTgzLjYyIDU2LjU4aC4xNGMyMi4xMSAwIDQ5LjA2IDYuMjkgNjguNTYgMTYuMjJsLTIxIDM2LjY0QzM2NS45MiA0NTkgMzU1LjE3IDQ1OCAzNDMgNDU3LjM2Yy0xOC4xNC0xLTI3LjI2IDUuNTEtMjcuNCAxMi41LS4xOCA4LjUyIDE3LjEzIDE2LjIzIDMzLjQ1IDIxLjQ3IDI0LjcgNy44NSA1Ni4xIDE4LjMzIDYwLjkgNDguN2w0NS4xNS0xMTkuMzZoNTIuNDVsNTIuODggMTQyLjkxLS4yLTE0Mi44Nkg2MjFjNTcuODQgMCA4NSAxOS41OCA4NSA2NC41MyAwIDQwLjM2LTI4IDY0LjQyLTc1LjI1IDY0LjQyaC0xOS41NmwtLjE5IDUzLjY5LTkyLS4wOS02LjM4LTIzLjI3YTEwMS42NSAxMDEuNjUgMCAwIDEtMzEuNTYgNC44MyAxMDAuNTIgMTAwLjUyIDAgMCAxLTMyLjMyLTUuMTJsLTkuMTkgMjMuNTQtNTEuMjUuMTYgMi4zLTExLjg0Yy0uNzMuNjQtMS40MyAxLjI5LTIuMjIgMS45MS0xMy43IDExLTMwLjk0IDE2LjExLTUyLjE4IDE2LjQ5aC01LjQ4Yy0yNC40MSAwLTQ1Ljg5LTUuNzgtNjYuMTMtMTcuMjhsMTguNzEtMzcuMTJjMjAuMjYgMTIgMzMgMTQuNjggNTAuMTEgMTQuMzEgOC44OS0uMTggMTUuMzItMS44IDE5LjUyLTYuMTNhMTQuMjkgMTQuMjkgMCAwIDAgNC05LjQ1Yy4xNy05LjY0LTEzLjU2LTE0LjE3LTMwLjM2LTE5LjM3LTEzLjYyLTQuMjItMjkuMDgtMTAtNDEuMTctMTguODMtMTQuMzEtMTAuNTMtMjEuMTItMjMuNjktMjAuNzgtNDIuMjdhNTEgNTEgMCAwIDEgMTQuNDktMzUuMzFjMTMuMzEtMTMuNzYgMzQuNzYtMjIuMTIgNjAuNTQtMjIuMTJ6bTI3MS41NSA0Mi44djQ4LjhoMTMuMzVjMTcuNzggMCAzMi01LjkyIDMyLTI0LjcyIDAtMTguMTYtMTQuMTktMjQuMDktMzItMjQuMDl6bS0xMzAuMzIgMTkuNjUtMTkuMTcgNjAuNTRhNTQuOTIgNTQuOTIgMCAwIDAgMTkuMzggMy4zOSA1Ni43OSA1Ni43OSAwIDAgMCAxOS0zLjIybC0xOC44Ny02MC43MXoiPjwvcGF0aD48L3N2Zz4=",
+          "text": "SAP"
+        }
+      ]
+    },
+    {
+      "category": "Systèmes d'exploitation",
+      "inline": true,
+      "childs": [
+        {
+          "classes": "fa-brands fa-microsoft",
+          "text": "Windows"
+        },
+        {
+          "classes": "fa-brands fa-linux",
+          "text": "Linux"
+        },
+        {
+          "classes": "fa-brands fa-ubuntu",
+          "text": "Ubuntu"
+        },
+        {
+          "classes": "fa-brands fa-apple",
+          "text": "Mac"
+        },
+        {
+          "classes": "fa-brands fa-freebsd",
+          "text": "FreeBSD"
+        }
+      ]
+    }
+  ],
+  "awards": [
+    {
+      "title": "Un diplome avec un lien",
+      "name": "Nom de l'école",
+      "address": "Internet",
+      "description": null,
+      "date": "09/06/2023/d",
+      "url": "https://zapto.zip"
+    },
+    {
+      "title": "Un diplome sans lien",
+      "name": "Github",
+      "address": "sur le site",
+      "description": null,
+      "date": "16/12/2022/d",
+      "url": null
+    }
+  ],
+  "locale": {
+    "code": "fr",
+    "resume": "CV",
+    "about": "À propos",
+    "experiences": "Expériences",
+    "education": "Éducation",
+    "skills": "Compétences",
+    "interests": "Passions",
+    "awards": "Récompenses",
+    "currently": "Actuellement"
+  }
+}
