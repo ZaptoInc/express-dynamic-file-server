@@ -3,7 +3,7 @@
 const path = require("path") //define path
 
 //#region config
-let configPath = path.join(__dirname, "/example/resume/config.json") //config path
+let configPath = path.join(__dirname, "resume", "config.json") //config path
 
 delete require.cache[require.resolve(configPath)]; //removes the config from the cache
 let config = require(configPath) //define config
@@ -19,7 +19,7 @@ if(!config.locales.includes(currentLocale)) currentLocale = defaultLocale //if t
 //#endregion
 
 //#region data
-let dataPath = `${__dirname}/example/resume/locale/${currentLocale}.json` //data path
+let dataPath = path.join(__dirname, "resume", "locale", `${currentLocale}.json`) //data path
 delete require.cache[require.resolve(dataPath)]; //removes the data from the cache
 let data = require(dataPath) //define data
 //#endregion
