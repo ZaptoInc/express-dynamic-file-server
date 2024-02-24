@@ -195,6 +195,7 @@ app.all("*", function (req, res) {
             else if (filePath.endsWith(".ejs")) {
               res.render(filePath, {
                 ...rendererParams,
+                __dirname: path.join(__dirname, folderConfig.config.folder),
                 req,
                 res,
                 config: folderConfig,
